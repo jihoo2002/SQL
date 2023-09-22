@@ -1,7 +1,5 @@
 --lower(소문자), initcap(앞글자만 대문자), upper(대문자)
-
 SELECT * FROM dual;
-
 /*
 dual이라는 테이블은 sys가 소유하는 오라클의 표준 테이블로서,
 오직 한 행에 한 컬럼만 담고 있는 dummy 테이블 입니다.
@@ -61,7 +59,7 @@ FROM dual;
 --RTRIM(param1, param2)-> 파람2의 값을 파람 1에서 찾아서 제거(오른쪽부터)
 SELECT LTRIM('javascript_java', 'java') FROM dual;
 SELECT RTRIM('javascript_java', 'java') FROM dual;
-SELECT TRIM('     java     ') FROM dual;
+SELECT TRIM('     java      ') FROM dual;
 
 --replace()
 SELECT

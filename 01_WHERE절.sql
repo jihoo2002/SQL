@@ -57,6 +57,10 @@ SELECT first_name, hire_date
 FROM employees
 WHERE hire_date LIKE '___05%'; --앞 세글자 건너뛰고
 
+
+--IS NULL(NULL 값)
+SELECT * FROM employees
+WHERE manager_id IS NULL;
 --AND, OR
 --AND가 OR보다 연산 순서가 빠름.
 SELECT * FROM employees

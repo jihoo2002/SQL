@@ -1,0 +1,147 @@
+ --그룹 함수 AVG, MAX, MIN , SUM, COUNT
+ 
+ SELECT
+    AVG(salary),
+    MAX(salary),
+    MIN(salary),
+    SUM(salary),
+    COUNT(salary)
+ FROM employees;
+ 
+SELECT COUNT(*) FROM employees; --총 행 데이터 수
+SELECT COUNT(first_name) FROM employees;
+SELECT COUNT(commission_pct) FROM employees;--null이 아닌 행의 수
+SELECT COUNT(manager_id) FROM employees; --null이 아닌 행의 수
+ 
+ --부서별로 그룹화, 그룹함수의 사용
+ SELECT
+    department_id,
+    AVG(salary)
+FROM employees
+GROUP BY department_id; --부서별 평균 
+
+/*주의할점
+그룹 함수는 일반 칼럼과 동시에 그냥 출력할 수 없습니다.
+*/
+ SELECT
+    department_id,
+    AVG(salary)
+ FROM employees; --에러
+
+--GROUP BY절을 사용할 때 group절에 묶이지 않으면 다른 컬럼 조회 불가능
+  SELECT
+    job_id,
+    department_id,
+    AVG(salary)
+FROM employees
+GROUP BY department_id; --에러 | 모두 그룹화 되어야 함
+ 
+ --GROUP BY절을 2개 이상 사용
+SELECT
+    job_id,
+    department_id,
+    AVG(salary)
+FROM employees
+GROUP BY department_id, job_id
+ORDER BY department_id ;
+ 
+ --GROUP BY 를 통해 그룹화할때 조건을 걸 경우  having 을 사용
+ 
+SELECT
+    department_id,
+    AVG(salary)
+FROM employees
+GROUP BY department_id
+HAVING SUM(salary)>100000; --그룹의 조건 
+
+SELECT
+    job_id,
+    count(*)
+FROM employees
+GROUP BY job_id 
+HAVING count(*) >= 5;
+
+--부서 아이디가 50이상인것들을 그룹화시키고, 그룹 월급 평균이 5000이상만 조회
+SELECT
+    department_id,
+    AVG(salary) as 평균
+FROM employees
+WHERE department_id >=50
+GROUP BY department_id
+HAVING AVG(salary) >=5000
+ORDER BY department_id DESC;
+--FROM- WHERE- GROUPBY- HAVING-SELECT- ORDER BY
+ 
+/*
+문제 1.
+사원 테이블에서 JOB_ID별 사원 수를 구하세요.
+사원 테이블에서 JOB_ID별 월급의 평균을 구하세요. 월급의 평균 순으로 내림차순 정렬하세요.
+*/
+SELECT
+    job_id,
+    count(*) AS 사원수
+FROM employees
+GROUP BY job_id;
+
+SELECT
+    job_id,
+    avg(salary) AS 평균월급
+FROM employees
+GROUP BY job_id
+ORDER BY avg(salary) DESC;
+/*
+문제 2.
+사원 테이블에서 입사 년도 별 사원 수를 구하세요.
+(TO_CHAR() 함수를 사용해서 연도만 변환합니다. 그리고 그것을 그룹화 합니다.)
+*/
+ SELECT
+count(*) AS 사원수,
+to_char(hire_date, 'YYYY') AS 입사년도
+FROM employees
+GROUP BY to_char(hire_date, 'YYYY')
+ORDER BY 입사년도 ASC;
+ 
+/*
+문제 3.
+급여가 5000 이상인 사원들의 부서별 평균 급여를 출력하세요. 
+단 부서 평균 급여가 7000이상인 부서만 출력하세요.
+*/
+SELECT
+    department_id,
+    avg(salary)
+FROM employees
+WHERE salary >=5000
+GROUP BY department_id
+HAVING avg(salary) >= 7000;
+
+
+/*
+문제 4.
+사원 테이블에서 commission_pct(커미션) 컬럼이 null이 아닌 사람들의
+department_id(부서별) salary(월급)의 평균, 합계, count를 구합니다.
+조건 1) 월급의 평균은 커미션을 적용시킨 월급입니다.
+조건 2) 평균은 소수 2째 자리에서 절삭 하세요.
+*/
+
+ SELECT
+    department_id AS 부서별,
+    TRUNC(avg(salary+(salary*commission_pct)), 2) AS 평균,
+    sum(salary+(salary*commission_pct)) AS 합계,
+    count(*)
+ FROM employees
+ where commission_pct is not null
+ GROUP BY department_id;
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
