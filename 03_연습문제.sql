@@ -36,7 +36,9 @@ FROM employees
 WHERE salary >10000;
 --7. 보너스를 받는 사원의 이름과 직무, 보너스율을 출력하세요.
 SELECT
-    first_name,job_id,commission_pct 
+    first_name,
+    job_id,
+    commission_pct 
 FROM employees
 WHERE commission_pct IS NOT NULL; 
 
@@ -46,6 +48,7 @@ SELECT
 first_name, hire_date, salary
 FROM employees
 WHERE hire_date BETWEEN '03/01/01' AND '03/12/31';
+
 --9. 2003년도 입사한 사원의 이름과 입사일 그리고 급여를 출력하세요.(LIKE 연산자 사용)
 SELECT 
     first_name, hire_date, salary

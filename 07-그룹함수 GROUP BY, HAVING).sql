@@ -131,17 +131,4 @@ department_id(부서별) salary(월급)의 평균, 합계, count를 구합니다.
  FROM employees
  where commission_pct is not null
  GROUP BY department_id;
-
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
  

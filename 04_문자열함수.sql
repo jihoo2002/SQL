@@ -8,7 +8,9 @@ dual이라는 테이블은 sys가 소유하는 오라클의 표준 테이블로서,
 */
 
 SELECT 
-    'abcDEF', lower('abcDEF'), upper('abcDEF')
+    'abcDEF',
+    lower('abcDEF'),
+    upper('abcDEF')
 FROM
 dual;
 
@@ -58,6 +60,7 @@ FROM dual;
 --LTRIM(param1, param2)-> 파람2의 값을 파람 1에서 찾아서 제거(왼쪽부터)
 --RTRIM(param1, param2)-> 파람2의 값을 파람 1에서 찾아서 제거(오른쪽부터)
 SELECT LTRIM('javascript_java', 'java') FROM dual;
+--처음부터 삭제할 단어가 존재해야 삭제완료된다. 
 SELECT RTRIM('javascript_java', 'java') FROM dual;
 SELECT TRIM('     java      ') FROM dual;
 
@@ -84,7 +87,7 @@ SELECT
     CONCAT(first_name, last_name) AS 이름,
     REPLACE(hire_date, '/', '')AS 입사일자 
 FROM employees
-ORDER BY first_name ASC;
+ORDER BY 이름 ASC;
 
 /*
 문제 2.
@@ -92,11 +95,8 @@ EMPLOYEES 테이블에서 phone_number컬럼은 ###.###.####형태로 저장되어 있다
 여기서 처음 세 자리 숫자 대신 서울 지역변호 (02)를 붙여 
 전화 번호를 출력하도록 쿼리를 작성하세요. (CONCAT, SUBSTR 사용)
 */
-
-
-
 SELECT
- CONCAT('02',substr(phone_number, 4))   
+ CONCAT('(02)',substr(phone_number, 5))   
 FROM employees;
 
 /*
@@ -110,7 +110,7 @@ EMPLOYEES 테이블에서 JOB_ID가 it_prog인 사원의 이름(first_name)과 급여(salary)를
 */
 SELECT
     RPAD(SUBSTR(first_name, 1, 3),  LENGTH(first_name), '*') AS name,
-    LPAD(salary, 10, '*') AS salary
+    LPAD(salary, 10, '#') AS salary
 FROM employees
 WHERE LOWER(job_id) = 'it_prog';
 
