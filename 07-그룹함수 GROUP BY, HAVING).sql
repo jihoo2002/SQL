@@ -1,3 +1,4 @@
+
  --그룹 함수 AVG, MAX, MIN , SUM, COUNT
  
  SELECT

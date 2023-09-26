@@ -16,7 +16,8 @@ WHERE e.department_id = d.department_id;--오라클 조인
 SELECT
     e.first_name , e.last_name, e.hire_date,
     e.salary, e.job_id, d.department_name
-FROM employees e INNER JOIN departments d
+FROM employees e
+INNER JOIN departments d
 ON e.department_id = d.department_id; --안시 표준 조인문법
 
 /*
@@ -99,14 +100,13 @@ AND j.department_id(+) = 80;
 
 --employee_id는 전부 다 나온다. 
 SELECT 
-    e.employee_id as 사원번호, 
+    e.employee_id , 
     e.first_name, 
-    e.manager_id as 매니저번호,
-    s.first_name, 
-    s.employee_id
+    e.manager_id ,
+    s.employee_id,
+    s.first_name
 FROM employees e INNER JOIN employees s
-ON e.manager_id = s.employee_id
-ORDER BY employee_id ;
+ON e.manager_id = s.employee_id;
 
 
 
