@@ -143,7 +143,8 @@ WHERE j.job_title in('Stock Manager', 'Stock Clerk');
 
 
 SELECT
-d.department_name
+d.department_name,
+d.department_id
 
 FROM departments d
 LEFT OUTER JOIN employees e

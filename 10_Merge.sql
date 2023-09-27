@@ -100,11 +100,12 @@ ROLLBACK;
 
 
 
-
+---------------------------------------------------------
 CREATE TABLE DEPTS AS (SELECT * FROM departments WHERE 1=2);
 
 SELECT * FROM DEPTS;
 
+--문제 1
 INSERT INTO DEPTS
     (department_id, department_name, manager_id, location_id)
 VALUES 
@@ -113,12 +114,18 @@ VALUES
 INSERT INTO DEPTS
 (SELECT * FROM departments);
 
+INSERT INTO emps
+(SELECT * FROM employees);
+--문제 2
+2-(1)
 UPDATE DEPTS SET department_name = 'IT_bank'
 WHERE department_name ='IT Support';
 
-UPDATE DEPTS SET department_id = 301
+--2-2
+UPDATE DEPTS SET manager_id = 301
 WHERE department_id = 290;
 
+--2-3
 UPDATE DEPTS SET department_name = 'IT_Help'
 WHERE department_name = 'IT Helpdesk';
 
@@ -128,25 +135,36 @@ WHERE department_name = 'IT_Help';
 UPDATE DEPTS SET location_id = 1800
 WHERE department_name = 'IT_Help';
 
+
+--2-4
 UPDATE DEPTS
 SET manager_id = 301
 WHERE department_id IN(SELECT department_id
                         FROM DEPTS
                         WHERE department_name IN('개발', '회계부', '재정', '인사', '영업'));
-
+--문제 3번
 SELECT * FROM DEPTS;
 DELETE FROM DEPTS
-WHERE department_name = '영업';
+WHERE department_id = 320;
 
+--3-2
 DELETE FROM DEPTS
 WHERE department_name = 'NOC';
-
+--다른 방식
+DELETE FROM DEPTS
+WHERE department_id = (SELECT department_id 
+                        FROM DEPTS
+                        WHERE department_name = 'NOC')
+--4
 DELETE FROM DEPTS
 WHERE department_id > 200;
 
+--4-2
 UPDATE DEPTS SET manager_id = 100
-WHERE manager_id is null;
+WHERE manager_id is not null;
 
+
+--4-4
 MERGE INTO DEPTS a
     USING 
         (SELECT * FROM departments)b
@@ -164,22 +182,24 @@ WHEN NOT MATCHED THEN
         (b.department_id, b.department_name, b.manager_id,
          b.location_id);
 
+--문제 5
 CREATE TABLE jobs_it AS (SELECT * FROM jobs 
                             WHERE min_salary >6000);
 
-
+--5-2
 SELECT * FROM jobs_it;
 INSERT INTO jobs_it
     (job_id, job_title, min_salary, max_salary)
 VALUES 
     ('SEC_DEV', '보안개발팀', 6000, 19000);
     
+    --5-4
    MERGE INTO jobs_it a
     USING 
         (SELECT * FROM jobs 
         WHERE min_salary>5000) b
     ON 
-        (a.job_id = b.job_id)
+        (a.job_id = b.job_id)--병합의 조건만 들어가야 한다. 
 WHEN MATCHED THEN 
     UPDATE SET --수정하기 
         a.min_salary = b.min_salary,
