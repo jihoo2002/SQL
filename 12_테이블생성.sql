@@ -54,5 +54,5 @@ SELECT * FROM dept3;
 TRUNCATE TABLE dept3;
 
 --테이블 삭제
-DROP TABLE dept3;
+DROP TABLE dept3; 
 
