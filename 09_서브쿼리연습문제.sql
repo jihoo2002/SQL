@@ -237,6 +237,22 @@ WHERE e.job_id = 'SA_MAN';
 --사람이 없는 부서는 출력하지 뽑지 않습니다.
 */
 
+SELECT 
+    tbl.*, department_name, manager_id
+FROM 
+    (SELECT
+        d.department_id,
+        COUNT(*) AS 인원수
+    FROM employees e
+    JOIN departments d 
+    ON d.department_id = e.department_id
+    GROUP BY d.department_id
+   
+    )tbl
+JOIN departments d
+ON d.department_id = tbl.department_id
+ORDER BY 인원수 DESC;
+
 
 SELECT
     d.department_id,
@@ -250,11 +266,15 @@ WHERE e.employee_id is not null
 GROUP BY d.department_name, d.department_id,d.manager_id
 ORDER BY COUNT(*) DESC;
 
+
+
+
 /*
 문제 15
 --부서에 대한 정보 전부와, 주소, 우편번호, 부서별 평균 연봉을 구해서 출력하세요.
 --부서별 평균이 없으면 0으로 출력하세요.
 */
+--방법 1
 SELECT d.*, loc.postal_code, loc.street_address,
    NVL((SELECT
       TRUNC(avg(e.salary), 0)
@@ -264,7 +284,20 @@ FROM departments d
 JOIN locations loc
 ON d.location_id = loc.location_id;
 
- 
+--방법2
+SELECT d.*, tbl.평균연봉, loc.postal_code, loc.street_address
+FROM (SELECT
+    NVL(ROUND(AVG(e.salary), 0),0) AS 평균연봉,
+    d.department_id
+FROM departments d
+LEFT JOIN employees e
+ON e.department_id = d.department_id
+GROUP BY d.department_id
+)tbl
+LEFT JOIN departments d
+ON d.department_id = tbl.department_id
+JOIN locations loc
+ON loc.location_id = d.location_id;
 /*
 문제 16
 -문제 15 결과에 대해 DEPARTMENT_ID기준으로 내림차순 정렬해서 

@@ -82,7 +82,15 @@ WHERE department_id = (SELECT department_id FROM departments
     
     
     
-    
+ SELECT 
+employee_id,
+last_name,
+email,
+hire_date,
+job_id
+FROM employees 
+WHERE employee_id = (SELECT max(employee_id) +1
+                    FROM employees);
     
     
     
