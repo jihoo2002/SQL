@@ -175,7 +175,7 @@ DECLARE
     msg VARCHAR2(100);
 BEGIN
    my_new_job_proc('JOB2', 'test_job2', 2000, 8000, msg); 
-   --msg가 p_result에게 이 값들을 담아 보냄
+   --msg는 out되는 값을 담음 
    dbms_output.put_line(msg); --p_result의 값을 바깥쪽인 여기에서 출력됨 
    
     my_new_job_proc('CEO', 'test_ceo', 20000, 80000, msg);
@@ -189,8 +189,14 @@ SELECT * FROM jobs;
 --IN, OUT 동시 처리
 CREATE OR REPLACE PROCEDURE my_parameter_test_proc
     (
+    -- IN: 반환 불가, 받는 용도로만 활용
     p_var1 IN VARCHAR2,
+    -- OUT : 받는 용도로 활용 불가능. 
+   
+    -- OUT이 되는 시점은 프로시저가 끝날 때, 그 전까지는 할당 안됨
     p_var2 OUT VARCHAR2,
+   
+    --IN, OUT 둘다 가능함 
     p_var3 IN OUT VARCHAR2
     )
 
@@ -219,12 +225,76 @@ BEGIN
     dbms_output.put_line('v_var3:'||v_var3);
 END;
 
+------------------------------------------------------
+--RETURN 
+CREATE OR REPLACE PROCEDURE my_new_job_proc --기존 프로시저 구조 수정
+    (p_job_id IN jobs.job_id%TYPE,
+     p_result OUT VARCHAR2 
+    )
+IS
+    v_cnt NUMBER := 0;
+    v_result VARCHAR2(100) := '존재하지 않는 값이라 INSERT처리되었어요';
+BEGIN
+
+    SELECT
+        COUNT(*)
+    INTO 
+        v_cnt
+    FROM jobs
+    WHERE job_id = p_job_id;
+    
+    IF v_cnt = 0 THEN 
+       dbms_output.put_line(p_job_id || '는 테이블에 존재하지 않습니다.');
+        RETURN; --프로시저 강제 종료., 값 리턴 용도 안됨
+    END IF;
+    --기존에 존재하는 데이터라면 조회된 결과를 추출.
+        SELECT
+            p_job_id || '의 최대 연봉: ' ||max_salary||',최소 연봉:' ||min_salary
+            
+        INTO 
+            v_result 
+        FROM jobs
+        WHERE job_id = p_job_id;
+     
+        p_result := v_result;
+    
+    
+    COMMIT;
+END;
+
+DECLARE
+    msg VARCHAR2(100);
+BEGIN
+    my_new_job_proc('IT_PROG', msg);
+    dbms_output.put_line(msg);
+END;
 
 
+------------------------------------------------
 
-
-
-
+--예외 처리
+DECLARE
+    v_num NUMBER := 0;
+BEGIN
+    v_num := 10/0;
+    /*
+    OTHERS 자리에 예외의 타입을 작성해 줍니다.
+    ACCESS_INTO_NULL -> 객체 초기화가 되어 있지 않은 상태에서 사용.
+    NO_DATA_FOUND -> SELECT INTO 시 데이터가 한 건도 없을 때
+    ZERO_DIVIDE -> 0으로 나눌 때
+    VALUE_ERROR -> 수치 또는 값 오류
+    INVALID_NUMBER -> 문자를 숫자로 변환할 때 실패한 경우
+*/
+    
+    EXCEPTION
+        WHEN ZERO_DIVIDE THEN 
+            dbms_output.put_line('0으로 나누시면 안돼요!');
+              dbms_output.put_line('SQL ERROR CODE: ' || SQLCODE);
+              dbms_output.put_line('SQL ERROR CODE: ' || SQLERRM);
+        WHEN OTHERS THEN --예외 타입 모를때!
+            --WHEN으로 설정한 예외가 아닌 다른 예외가 발생 시 OTHES 실행
+             dbms_output.put_line('알수없는 예외 발생');
+END;
 
 
 

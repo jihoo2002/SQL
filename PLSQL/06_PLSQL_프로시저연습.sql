@@ -79,7 +79,43 @@ employee_id를 입력받아 employees에 존재하면,
 근속년수를 out하는 프로시저를 작성하세요. (익명블록에서 프로시저를 실행)
 없다면 exception처리하세요
 */
+CREATE OR REPLACE PROCEDURE my_employ
+(
+ p_employee_id IN employees.employee_id%TYPE,
+ p_result OUT VARCHAR2
+)
+IS
+ v_cnt NUMBER := 0;
+  v_result VARCHAR2(100) := '존재하지 않는 값이에요';
+BEGIN
+    SELECT
+    COUNT(*)
+    INTO v_cnt
+    FROM employees
+    WHERE employee_id = p_employee_id;
+    
+--    IF v_cnt = 0 THEN
+--     EXCEPTION WHEN OTHERS THEN
+--        dbms_output.put_line('예외가 발생했습니다.');
+--    END IF;
+  IF v_cnt = 1 THEN  
+    SELECT
+       '근속년수:' || ROUND((sysdate- hire_date)/365,0)||'년'
+    INTO v_result
+    FROM employees
+    WHERE employee_id = p_employee_id;
+     p_result := v_result;
+    END IF;
+END; 
 
+DECLARE
+    msg VARCHAR2(100);
+BEGIN
+    my_employ(100,msg);
+    dbms_output.put_line(msg);
+END;
+
+SELECT employee_id FROM dual;
 /*
 프로시저명 - new_emp_proc
 employees 테이블의 복사 테이블 emps를 생성합니다.
@@ -91,3 +127,43 @@ employee_id, last_name, email, hire_date, job_id를 입력받아
 병합시킬 데이터 -> 프로시저로 전달받은 employee_id를 dual에 select 때려서 비교.
 프로시저가 전달받아야 할 값: 사번, last_name, email, hire_date, job_id
 */
+CREATE OR REPLACE PROCEDURE new_emp_proc 
+(p_employee_id IN employees.employee_id%TYPE,
+ p_last_name IN employees.last_name%TYPE,
+ p_email IN employees.email%TYPE,
+ p_hire_date IN employees.hire_date%TYPE,
+ p_job_id IN employees.job_id%TYPE)
+ 
+ IS
+ BEGIN
+    MERGE INTO emps a --(머지를 할 타켓 테이블)
+    USING --병합시킬 데이터 
+        (SELECT * FROM employees
+        WHERE ) b --병합하고자 하는 데이터를 서브쿼리로 표현.
+    ON --병합시킬 데이터의 연결 조건
+        (a.p_employee_id = b.employee_id)
+WHEN MATCHED THEN --조건이 일치하는 경우에는 타켓테이블에 이렇게 실행하라
+   UPDATE 
+    SET last_name = p_last_name,
+        email = p_email,
+        hire_date = p_hire_date,
+        job_id = p_job_id
+       
+    WHEN NOT MATCHED THEN
+    INSERT /*속성(컬럼)*/VALUES
+    (b.employee_id,  b.last_name,
+    b.email,  b.hire_date, b.job_id);
+
+    
+ END;
+ 
+ 
+    new_emp_proc (208,'춘식이', 'dljslfkj', '2023/10/04', 'AD VP');
+   
+SELECT * FROM emps;
+ 
+ 
+ 
+ 
+ 
+    

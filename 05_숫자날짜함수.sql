@@ -56,7 +56,7 @@ SELECT
 FROM employees; -- 주소
 
 SELECT
-   (sysdate- hire_date)/365 AS year
+   ROUND((sysdate- hire_date)/365,0) AS year
 FROM employees; --년수
 
 -- 날짜 반올림, 절사
